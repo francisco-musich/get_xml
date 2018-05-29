@@ -102,32 +102,44 @@ std::string Client::getInfo() {
 string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 {
 	Timer timer;
-
-
-
 	string buffer;
 	char hola[1024];
-	size_t lenght = 0;
+	size_t length = 0;
 	boost::system::error_code error;
-
 	timer.start();
-
 	bool timeout = false;
+	string last_string = "";
+	string aux_string = "";
+
 	try
 	{
-		do {
-			lenght = this->clientSocket->read_some(boost::asio::buffer(hola,1024), error);
-			buffer += string(hola);
-			timer.stop();
-			if (timer.getTime() < ms) {
-				timeout = false;
-			}
-			else
-			{
-				timeout = true;
-			}
-			
-		} while ((error.value() == WSAEWOULDBLOCK) || !timeout);
+		while (!timeout)
+		{
+			do {
+				length = this->clientSocket->read_some(boost::asio::buffer(hola, 1024), error);	//leo, lo mato con breaks por que sino se queda esperando
+				
+				timer.stop();
+				if (timer.getTime() < ms) {	//todavia no me pase de tiempo
+					timeout = false;
+					aux_string = string(hola);
+					if (/*last_string !=aux_string*/ length)
+					{
+						buffer += aux_string;
+						//last_string = aux_string;
+					}
+					else
+					{
+						break;
+					}
+				}
+				else
+				{
+					timeout = true;
+					break;
+				}
+
+			} while ((error.value() == WSAEWOULDBLOCK));
+		}
 		int erval = error.value();
 		if (error == boost::asio::error::eof)
 			cout << "Mensaje recibido bien";
@@ -139,20 +151,6 @@ string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 	{
 		std::cerr << e.what() << std::endl;
 	}
-
-	
-
-  
-
-	//std::string retValue;
-
-	/*if (!timeout) 
-	{
-		retValue = buffer;
-		std::cout << "Recieved a message" << std::endl;
-	}
-	else
-		retValue = CLIENT_TIMEOUT;*/
 
 	return buffer;
 }

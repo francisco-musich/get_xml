@@ -65,8 +65,8 @@ bool xml_getter::isGetOkay()
 
 void xml_getter::trim()	//Recorto la primera informacion que no me sirve
 {
-	size_t pos_found = xmlRecieved.find_first_of("<?xml version=");	//Encuentro la posicion del primer header
-	xmlRecieved = xmlRecieved.substr(pos_found);	//Trimeo esa parte que no me sirve.
+	size_t pos_found2 = xmlRecieved.find_first_of("<?");	//Encuentro la posicion del primer header
+	xmlRecieved = xmlRecieved.substr(pos_found2);	//Trimeo esa parte que no me sirve.
 }
 
 
