@@ -2,7 +2,7 @@
 
 int main()
 {
-	xml_getter getter("blogs.nasa.gov/stationreport/feed/");
+	xml_getter getter("cyber.harvard.edu/rss/examples/rss2sample.xml");
 	getter.getXml();
 	bool okay = getter.isGetOkay();
 	if (okay)

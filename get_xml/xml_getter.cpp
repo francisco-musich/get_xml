@@ -17,10 +17,10 @@ bool xml_getter::getXml()
 	if ((this->client))
 	{
 		client->link();
-		string msj1 = "GET" + rssFeed + "HTTP/1.1";	//Creo los mensajes para enviar
+		string msj1 = "GET " + rssFeed + " HTTP/1.1";	//Creo los mensajes para enviar
 		msj1.push_back(13);
 		msj1.push_back(10);
-		string msj2 = "Host : " + hostToGet;	//Creo mensajes para enviar
+		string msj2 = "Host: " + hostToGet;	//Creo mensajes para enviar
 		msj2.push_back(13);
 		msj2.push_back(10);
 		string msj3 = "";
