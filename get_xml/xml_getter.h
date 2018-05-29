@@ -8,14 +8,15 @@ using namespace std;
 class xml_getter
 {
 public:
-	xml_getter(string webpage);
+	xml_getter(string webpage);	
 	~xml_getter();
-	bool getXml();
-	string returnXml();
-	bool isGetOkay();
-	void trim();
+	bool getXml(); //Busca el xml en una el sitio
+	string returnXml(); //Si esta todo bien devuelve el xml en un string, si no devuelve "Error"
+	
 
 private:
+	bool isGetOkay();
+	void trim();
 	Client* client;
 	string hostToGet;
 	string rssFeed;

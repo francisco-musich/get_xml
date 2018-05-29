@@ -2,13 +2,8 @@
 
 int main()
 {
-	xml_getter getter("blogs.nasa.gov/stationreport/feed/");
+	xml_getter getter("news.mit.edu/rss/school/engineering");
 	getter.getXml();
-	bool okay = getter.isGetOkay();
-	if (okay)
-	{
-		getter.trim();
-	}
 	cout << getter.returnXml() << endl;
 
 }

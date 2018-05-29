@@ -16,6 +16,10 @@ Client::Client(string ip, const char * port_)
 void Client::link()	//Conecto al ip enviado
 {
 
+	/*size_t stringLength = ipToConect.length();
+	char* messagePointer = new char[stringLength]; //Data sin \n
+	ipToConect.copy(messagePointer, stringLength);	//Copio data a arreglo*/
+
 	auto q = ip::tcp::resolver::query(ipToConect.c_str(), this->port);
 	this->endpoint = clientResolver->resolve(q);
 	cout << "Connecting to Server" << endl;
@@ -31,6 +35,8 @@ void Client::link()	//Conecto al ip enviado
 	
 
 	cout << "Client trying to connect to " << ipToConect.c_str() << endl;
+
+	//delete[] messagePointer;
 }
 
 void Client::sendMessage(string msg)	//Envio mensaje
@@ -38,13 +44,22 @@ void Client::sendMessage(string msg)	//Envio mensaje
 	std::cout << "Trying to send message" << std::endl;
 	size_t lenght = 0;
 	boost::system::error_code error;
+	//En vez de enviar un string envio un arreglo de chars sin el terminador
+	size_t stringLength = msg.size();	
+	char* messagePointer = new char[stringLength]; //Data sin \n
+	msg.copy(messagePointer, stringLength);	//Copio data a arreglo
 
+	lenght = this->clientSocket->write_some(boost::asio::buffer(messagePointer,stringLength), error);
 
-	lenght = this->clientSocket->write_some(boost::asio::buffer(msg, msg.size()), error);
+	char dec = 13;
+	char*pdec = &dec;
+	lenght += this->clientSocket->write_some(boost::asio::buffer(pdec,1), error);
+	dec = 10;
+	lenght += this->clientSocket->write_some(boost::asio::buffer(pdec,1), error);
 
-	std::cout << "Message sent, lenght =" <<lenght <<std::endl;
+	std::cout << "Message sent, lenght =" <<lenght <<"Message"<<msg<<std::endl;
 
-
+	delete[] messagePointer;
 }
 
 /*bool Client::sendMessageTimed(string msg, int ms)
@@ -91,6 +106,7 @@ string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 
 
 	string buffer;
+	char hola[1024];
 	size_t lenght = 0;
 	boost::system::error_code error;
 
@@ -100,7 +116,8 @@ string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 	try
 	{
 		do {
-			lenght = this->clientSocket->read_some(boost::asio::buffer(buffer), error);
+			lenght = this->clientSocket->read_some(boost::asio::buffer(hola,1024), error);
+			buffer += string(hola);
 			timer.stop();
 			if (timer.getTime() < ms) {
 				timeout = false;
@@ -109,7 +126,7 @@ string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 			{
 				timeout = true;
 			}
-
+			
 		} while ((error.value() == WSAEWOULDBLOCK) || !timeout);
 		int erval = error.value();
 		if (error == boost::asio::error::eof)
@@ -127,17 +144,17 @@ string Client::getInfoTimed(int ms)	//ESTO HAY QUE REHACER
 
   
 
-	std::string retValue;
+	//std::string retValue;
 
-	if (!timeout) 
+	/*if (!timeout) 
 	{
 		retValue = buffer;
 		std::cout << "Recieved a message" << std::endl;
 	}
 	else
-		retValue = CLIENT_TIMEOUT;
+		retValue = CLIENT_TIMEOUT;*/
 
-	return retValue;
+	return buffer;
 }
 
 
