@@ -2,7 +2,7 @@
 
 int main()
 {
-	xml_getter getter("news.mit.edu/rss/school/engineering");
+	xml_getter getter("blogs.nasa.gov/stationreport/feed/");
 	getter.getXml();
 	cout << getter.returnXml() << endl;
 
